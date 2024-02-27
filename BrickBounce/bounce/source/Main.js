@@ -10,8 +10,8 @@ import Ship         from "./Ship.js";
 import Tail         from "./Tail.js";
 
 // Utils
-import Sounds       from "../../utils/Sounds.js";
-import Utils        from "../../utils/Utils.js";
+import Sounds       from "../utils/Sounds.js";
+import Utils        from "../utils/Utils.js";
 
 // Variables
 let mode       = null;
