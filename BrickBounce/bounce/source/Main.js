@@ -97,7 +97,6 @@ function gameOver() {
   display.set("gameOver");
   hideGame();
   scores.setInput();
-  console.log("Score", score.score);
 
   // Create an object with the score
   var message = { score: score.score };
