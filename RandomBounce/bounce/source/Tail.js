@@ -1,7 +1,7 @@
 import Ball         from "./Ball.js";
 
 // Utils
-import Utils        from "../../utils/Utils.js";
+import Utils        from "../utils/Utils.js";
 
 
 

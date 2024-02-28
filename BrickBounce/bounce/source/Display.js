@@ -39,8 +39,8 @@ export default class Display {
      */
     show() {
         this.container.className = this.current;
-        this.header.innerHTML    = this.messages[this.current][0];
-        this.paragraph.innerHTML = this.messages[this.current][1];
+        // this.header.innerHTML    = this.messages[this.current][0];
+        // this.paragraph.innerHTML = this.messages[this.current][1];
     }
 
     /**

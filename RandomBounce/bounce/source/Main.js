@@ -99,12 +99,20 @@ function gameOver() {
     display.set("gameOver");
     hideGame();
     scores.setInput();
+    console.log("Score", score.score);
+  
+    // Create an object with the score
+    var message = { score: score.score };
+  
+    // Send the message to the parent window
+    window.parent.postMessage(message, "*");
+  
     board.end();
-
+  
     if (mode.isBricksMode) {
-        bricks.destroy();
+      bricks.destroy();
     }
-}
+  }
 
 /**
  * Show the High Scores

@@ -1,42 +1,40 @@
-import Ball         from "./Ball.js";
-import Board        from "./Board.js";
-import Bricks       from "./Bricks.js";
-import Display      from "./Display.js";
-import HighScores   from "./HighScores.js";
-import Keyboard     from "./Keyboard.js";
-import Mode         from "./Mode.js";
-import Score        from "./Score.js";
-import Ship         from "./Ship.js";
-import Tail         from "./Tail.js";
+import Ball from "./Ball.js";
+import Board from "./Board.js";
+import Bricks from "./Bricks.js";
+import Display from "./Display.js";
+import HighScores from "./HighScores.js";
+import Keyboard from "./Keyboard.js";
+import Mode from "./Mode.js";
+import Score from "./Score.js";
+import Ship from "./Ship.js";
+import Tail from "./Tail.js";
 
 // Utils
-import Sounds       from "../utils/Sounds.js";
-import Utils        from "../utils/Utils.js";
+import Sounds from "../utils/Sounds.js";
+import Utils from "../utils/Utils.js";
 
 // Variables
-let mode       = null;
-let display    = null;
-let score      = null;
-let keyboard   = null;
-let board      = null;
-let ship       = null;
-let ball       = null;
-let tail       = null;
-let bricks     = null;
-let sounds     = null;
-let scores     = null;
+let mode = null;
+let display = null;
+let score = null;
+let keyboard = null;
+let board = null;
+let ship = null;
+let ball = null;
+let tail = null;
+let bricks = null;
+let sounds = null;
+let scores = null;
 
 let hasStarted = false;
-let startTime  = 0;
-
-
+let startTime = 0;
 
 /**
  * Show the Main Screen
  * @returns {Void}
  */
 function showMainScreen() {
-    display.set("mainScreen").show();
+  display.set("mainScreen").show();
 }
 
 /**
@@ -44,8 +42,8 @@ function showMainScreen() {
  * @returns {Void}
  */
 function startGame() {
-    hasStarted = true;
-    ball.start();
+  hasStarted = true;
+  ball.start();
 }
 
 /**
@@ -53,11 +51,11 @@ function startGame() {
  * @returns {Void}
  */
 function finishGame() {
-    board.end();
-    if (mode.isBricksMode) {
-        bricks.destroy();
-    }
-    showMainScreen();
+  board.end();
+  if (mode.isBricksMode) {
+    bricks.destroy();
+  }
+  showMainScreen();
 }
 
 /**
@@ -65,8 +63,8 @@ function finishGame() {
  * @returns {Void}
  */
 function hideGame() {
-    display.show();
-    board.end();
+  display.show();
+  board.end();
 }
 
 /**
@@ -74,8 +72,8 @@ function hideGame() {
  * @returns {Void}
  */
 function startPause() {
-    display.set("paused");
-    hideGame();
+  display.set("paused");
+  hideGame();
 }
 
 /**
@@ -83,12 +81,12 @@ function startPause() {
  * @returns {Void}
  */
 function endPause() {
-    display.set("playing").hide();
-    board.start((e) => ship.mouseMove(e));
+  display.set("playing").hide();
+  board.start((e) => ship.mouseMove(e));
 
-    if (hasStarted) {
-        requestAnimation();
-    }
+  if (hasStarted) {
+    requestAnimation();
+  }
 }
 
 /**
@@ -96,22 +94,29 @@ function endPause() {
  * @returns {Void}
  */
 function gameOver() {
-    display.set("gameOver");
-    hideGame();
-    scores.setInput();
-    board.end();
+  display.set("gameOver");
+  hideGame();
+  scores.setInput();
+  console.log("Score", score.score);
 
-    if (mode.isBricksMode) {
-        bricks.destroy();
-    }
+  // Create an object with the score
+  var message = { score: score.score };
+
+  // Send the message to the parent window
+  window.parent.postMessage(message, "*");
+
+  board.end();
+
+  if (mode.isBricksMode) {
+    bricks.destroy();
+  }
 }
-
 /**
  * Show the High Scores
  * @returns {Void}
  */
 function showHighScores() {
-    display.set("highScores").show();
+  display.set("highScores").show();
 }
 
 /**
@@ -119,9 +124,9 @@ function showHighScores() {
  * @returns {Void}
  */
 function saveHighScore() {
-    if (scores.save(mode.get(), score.get())) {
-        showHighScores();
-    }
+  if (scores.save(mode.get(), score.get())) {
+    showHighScores();
+  }
 }
 
 /**
@@ -129,20 +134,18 @@ function saveHighScore() {
  * @returns {Void}
  */
 function showHelp() {
-    display.set("help").show();
+  display.set("help").show();
 }
-
-
 
 /**
  * Callback used when the ship moves
  * @returns {Void}
  */
 function onShipMove() {
-    if (!hasStarted) {
-        ball.setStartLeft(ship);
-        tail.start(ball);
-    }
+  if (!hasStarted) {
+    ball.setStartLeft(ship);
+    tail.start(ball);
+  }
 }
 
 /**
@@ -151,57 +154,55 @@ function onShipMove() {
  * @returns {Void}
  */
 function newGame(gameMode) {
-    hasStarted = false;
+  hasStarted = false;
 
-    display.set("playing").hide();
-    mode.set(gameMode);
-    score.restart();
+  display.set("playing").hide();
+  mode.set(gameMode);
+  score.restart();
 
-    ship = new Ship(board, mode.shipWidth, onShipMove);
-    ball = new Ball(board.width, board.height);
-    tail = new Tail();
+  ship = new Ship(board, mode.shipWidth, onShipMove);
+  ball = new Ball(board.width, board.height);
+  tail = new Tail();
 
-    board.start((e) => ship.mouseMove(e));
-    ball.setStartTop(ship);
-    ball.setStartLeft(ship);
-    tail.start(ball);
+  board.start((e) => ship.mouseMove(e));
+  ball.setStartTop(ship);
+  ball.setStartLeft(ship);
+  tail.start(ball);
 
-    if (mode.isBricksMode) {
-        bricks = new Bricks();
-    }
-    requestAnimation();
+  if (mode.isBricksMode) {
+    bricks = new Bricks();
+  }
+  requestAnimation();
 }
-
-
 
 /**
  * Request an animation frame
  * @returns {Void}
  */
 function requestAnimation() {
-    startTime = new Date().getTime();
-    window.requestAnimationFrame(() => {
-        const time  = new Date().getTime() - startTime;
-        let   speed = time / 16;
+  startTime = new Date().getTime();
+  window.requestAnimationFrame(() => {
+    const time = new Date().getTime() - startTime;
+    let speed = time / 16;
 
-        if (speed < 0) {
-            speed = 0;
-        }
-        if (speed > 5) {
-            return requestAnimation();
-        }
+    if (speed < 0) {
+      speed = 0;
+    }
+    if (speed > 5) {
+      return requestAnimation();
+    }
 
-        if (hasStarted) {
-            tail.move(ball);
-            moveBall(speed);
-        }
-        keyboard.onKeyHold();
+    if (hasStarted) {
+      tail.move(ball);
+      moveBall(speed);
+    }
+    keyboard.onKeyHold();
 
-        if (display.isPlaying) {
-            requestAnimation();
-        }
-        return 0;
-    });
+    if (display.isPlaying) {
+      requestAnimation();
+    }
+    return 0;
+  });
 }
 
 /**
@@ -210,43 +211,43 @@ function requestAnimation() {
  * @returns {Void}
  */
 function moveBall(speed) {
-    let crash = false;
-    ball.move(speed);
+  let crash = false;
+  ball.move(speed);
 
-    if (mode.isBricksMode && bricks.crash(ball)) {
-        sounds.play("brick");
+  if (mode.isBricksMode && bricks.crash(ball)) {
+    sounds.play("brick");
+    score.inc();
+    ball.randomChange();
+  } else if (ball.bottomCrash()) {
+    sounds.play("end");
+    gameOver();
+  } else {
+    if (ball.direction.top < 0) {
+      crash = ball.topCrash();
+    } else if (ball.shipCrash(ship)) {
+      sounds.play("bounce");
+      ship.ballCrash();
+      if (mode.isSpeedMode) {
+        ball.changeAngle(ship);
+        ball.accelerate();
+      }
+      if (mode.isSpeedMode || mode.isRandomMode) {
         score.inc();
-        ball.randomChange();
-    } else if (ball.bottomCrash()) {
-        sounds.play("end");
-        gameOver();
-    } else {
-        if (ball.direction.top < 0) {
-            crash = ball.topCrash();
-        } else if (ball.shipCrash(ship)) {
-            sounds.play("bounce");
-            ship.ballCrash();
-            if (mode.isSpeedMode) {
-                ball.changeAngle(ship);
-                ball.accelerate();
-            }
-            if (mode.isSpeedMode || mode.isRandomMode) {
-                score.inc();
-            }
-            if (mode.isBricksMode && bricks.restart()) {
-                ship.reduceWidth();
-            }
-            crash = true;
-        }
-        if (ball.direction.left < 0) {
-            crash = ball.leftCrash();
-        } else {
-            crash = ball.rightCrash();
-        }
-        if (crash && (mode.isRandomMode || mode.isBricksMode)) {
-            ball.randomChange();
-        }
+      }
+      if (mode.isBricksMode && bricks.restart()) {
+        ship.reduceWidth();
+      }
+      crash = true;
     }
+    if (ball.direction.left < 0) {
+      crash = ball.leftCrash();
+    } else {
+      crash = ball.rightCrash();
+    }
+    if (crash && (mode.isRandomMode || mode.isBricksMode)) {
+      ball.randomChange();
+    }
+  }
 }
 
 /**
@@ -254,24 +255,24 @@ function moveBall(speed) {
  * @returns {Void}
  */
 function initDomListeners() {
-    document.body.addEventListener("click", (e) => {
-        const element = Utils.getTarget(e);
-        const actions = {
-            play       : () => newGame(element.dataset.mode),
-            mainScreen : () => showMainScreen(),
-            highScores : () => showHighScores(),
-            help       : () => showHelp(),
-            endPause   : () => endPause(),
-            finishGame : () => finishGame(),
-            save       : () => saveHighScore(),
-            showScores : () => scores.show(element.dataset.mode),
-            sound      : () => sounds.toggle(),
-        };
+  document.body.addEventListener("click", (e) => {
+    const element = Utils.getTarget(e);
+    const actions = {
+      play: () => newGame(element.dataset.mode),
+      mainScreen: () => showMainScreen(),
+      highScores: () => showHighScores(),
+      help: () => showHelp(),
+      endPause: () => endPause(),
+      finishGame: () => finishGame(),
+      save: () => saveHighScore(),
+      showScores: () => scores.show(element.dataset.mode),
+      sound: () => sounds.toggle(),
+    };
 
-        if (actions[element.dataset.action]) {
-            actions[element.dataset.action]();
-        }
-    });
+    if (actions[element.dataset.action]) {
+      actions[element.dataset.action]();
+    }
+  });
 }
 
 /**
@@ -279,41 +280,41 @@ function initDomListeners() {
  * @returns {Object}
  */
 function getShortcuts() {
-    return {
-        mainScreen : {
-            O : () => newGame(mode.get()),
-            // E : () => newGame("speed"),
-            // R : () => newGame("random"),
-            // C : () => newGame("bricks"),
-            // I : () => showHighScores(),
-            H : () => showHelp(),
-            M : () => sounds.toggle(),
-        },
-        paused : {
-            P : () => endPause(),
-            B : () => finishGame(),
-        },
-        gameOver : {
-            O : () => saveHighScore(),
-            B : () => showMainScreen(),
-        },
-        highScores : {
-            // E : () => scores.show("speed"),
-            // R : () => scores.show("random"),
-            // C : () => scores.show("bricks"),
-            B : () => showMainScreen(),
-        },
-        help : {
-            B : () => showMainScreen(),
-        },
-        playing : {
-            A : () => ship.keyMove(-1),
-            D : () => ship.keyMove(1),
-            O : () => startGame(),
-            P : () => startPause(),
-            M : () => sounds.toggle(),
-        },
-    };
+  return {
+    mainScreen: {
+      O: () => newGame(mode.get()),
+      // E : () => newGame("speed"),
+      // R : () => newGame("random"),
+      // C : () => newGame("bricks"),
+      // I : () => showHighScores(),
+      H: () => showHelp(),
+      M: () => sounds.toggle(),
+    },
+    paused: {
+      P: () => endPause(),
+      B: () => finishGame(),
+    },
+    gameOver: {
+      O: () => saveHighScore(),
+      B: () => showMainScreen(),
+    },
+    highScores: {
+      // E : () => scores.show("speed"),
+      // R : () => scores.show("random"),
+      // C : () => scores.show("bricks"),
+      B: () => showMainScreen(),
+    },
+    help: {
+      B: () => showMainScreen(),
+    },
+    playing: {
+      A: () => ship.keyMove(-1),
+      D: () => ship.keyMove(1),
+      O: () => startGame(),
+      P: () => startPause(),
+      M: () => sounds.toggle(),
+    },
+  };
 }
 
 /**
@@ -321,29 +322,27 @@ function getShortcuts() {
  * @returns {Void}
  */
 function onBoardClick() {
-    if (!hasStarted) {
-        startGame();
-    } else {
-        startPause();
-    }
+  if (!hasStarted) {
+    startGame();
+  } else {
+    startPause();
+  }
 }
-
-
 
 /**
  * The main Function
  * @returns {Void}
  */
 function main() {
-    initDomListeners();
+  initDomListeners();
 
-    display  = new Display();
-    mode     = new Mode();
-    score    = new Score();
-    sounds   = new Sounds("bounce.sound");
-    board    = new Board(onBoardClick);
-    scores   = new HighScores();
-    keyboard = new Keyboard(display, scores, getShortcuts());
+  display = new Display();
+  mode = new Mode();
+  score = new Score();
+  sounds = new Sounds("bounce.sound");
+  board = new Board(onBoardClick);
+  scores = new HighScores();
+  keyboard = new Keyboard(display, scores, getShortcuts());
 }
 
 // Load the game

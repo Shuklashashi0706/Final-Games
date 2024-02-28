@@ -1,7 +1,7 @@
 import Ship         from "./Ship.js";
 
 // Utils
-import Utils        from "../../utils/Utils.js";
+import Utils        from "../utils/Utils.js";
 
 
 
